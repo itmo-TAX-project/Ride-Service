@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package rides;
+
+option csharp_namespace = "Rides.RideService.Contracts";
+
+import "google/protobuf/wrappers.proto";
+
+service RideService {
+  rpc CreateRide(CreateRideRequest) returns (CreateRideResponse);
+  rpc CancelRide(CancelRideRequest) returns (CancelRideResponse);
+  rpc GetRide(GetRideRequest) returns (GetRideResponse);
+}
+
+message CreateRideRequest {
+  int64 passenger_id = 1;
+  double pickup_latitude = 2;
+  double pickup_longitude = 3;
+  double dropoff_latitude = 4;
+  double dropoff_longitude = 5;
+}
+
+message CreateRideResponse {
+  int64 ride_id = 1;
+}
+
+message CancelRideRequest {
+  int64 ride_id = 1;
+}
+
+message CancelRideResponse {
+}
+
+message GetRideRequest {
+  int64 ride_id = 1;
+}
+
+message GetRideResponse {
+  optional RideDto dto = 1;
+}
+
+message RideDto {
+  int64 ride_id = 1;
+  int64 passenger_id = 2;
+  google.protobuf.Int64Value assigned_driver_id = 3;
+  double pickup_latitude = 4;
+  double pickup_longitude = 5;
+  double dropoff_latitude = 6;
+  double dropoff_longitude = 7;
+  RideStatus status = 8;
+}
+
+enum RideStatus {
+  UNKNOWN = 0;
+  REQUESTED = 1;
+  SEARCHING = 2;
+  ASSIGNED = 3;
+  CONFIRMED = 4;
+  STARTED = 5;
+  COMPLETED = 6;
+  CANCELLED = 7;
+}

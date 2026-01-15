@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Grpc.Net.ClientFactory" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+      <PackageReference Include="Microsoft.Extensions.Http" />
+      <PackageReference Include="Microsoft.Extensions.Options" />
+      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+      <PackageReference Include="Grpc.Tools"/>
+      <PackageReference Include="Grpc.AspNetCore.Server"/>
+      <PackageReference Include="Grpc.AspNetCore.Server.Reflection"/>
+      <PackageReference Include="Itmo.Dev.Platform.Kafka"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Grpc\protos\**\*.proto" GrpcServices="Both"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Application\Application.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package routes;
+
+option csharp_namespace = "Routes.Client.Contracts";
+
+message Point {
+  double latitude = 1;
+  double longitude = 2;
+}
+
+message CalculateRouteRequest {
+  Point pickup = 1;
+  Point dropoff = 2;
+}
+
+message CalculateRouteResponse {
+  int64 route_id = 1;
+}
+
+service RouteService {
+  rpc CalculateRoute(CalculateRouteRequest) returns (CalculateRouteResponse);
+}
