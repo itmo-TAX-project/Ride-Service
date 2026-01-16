@@ -42,13 +42,6 @@ public class RideLogisticService : IRideLogisticService
         await _rideRepository.AddRideDriver(rideId, driverId, cancellationToken);
         await _rideStatusService.ChangeRideStatus(rideId, RideStatus.DriverAssigned, cancellationToken);
 
-        var rideAssignedMessage = new RideAssignedEvent()
-        {
-            RideId = rideId,
-            DriverId = driverId,
-        };
-        await _rideProducer.ProduceAsync(rideAssignedMessage, cancellationToken);
-
         transaction.Complete();
         transaction.Dispose();
     }
@@ -78,6 +71,13 @@ public class RideLogisticService : IRideLogisticService
         }
 
         await _rideStatusService.ChangeRideStatus(rideId, RideStatus.Confirmed, cancellationToken);
+
+        var rideAssignedMessage = new RideConfirmedEvent()
+        {
+            RideId = rideId,
+            DriverId = driverId,
+        };
+        await _rideProducer.ProduceAsync(rideAssignedMessage, cancellationToken);
 
         transaction.Complete();
         transaction.Dispose();

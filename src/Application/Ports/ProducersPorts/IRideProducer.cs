@@ -12,5 +12,5 @@ public interface IRideProducer
 
     Task ProduceAsync(RideCompletedEvent rideCompletedEvent, CancellationToken cancellationToken);
 
-    Task ProduceAsync(RideAssignedEvent rideCancelledEvent, CancellationToken cancellationToken);
+    Task ProduceAsync(RideConfirmedEvent rideCancelledEvent, CancellationToken cancellationToken);
 }

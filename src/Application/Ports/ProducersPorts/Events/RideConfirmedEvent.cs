@@ -1,6 +1,6 @@
 ﻿namespace Application.Ports.ProducersPorts.Events;
 
-public class RideAssignedEvent : IEventMessage
+public class RideConfirmedEvent : IEventMessage
 {
     public long RideId { get; set; }
 

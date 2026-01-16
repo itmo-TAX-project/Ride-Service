@@ -22,7 +22,6 @@
 
     <ItemGroup>
       <PackageReference Include="Itmo.Dev.Platform.Common" />
-      <PackageReference Include="Itmo.Dev.Platform.Kafka" />
     </ItemGroup>
 
 </Project>

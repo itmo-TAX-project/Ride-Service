@@ -13,20 +13,20 @@ public class RideProducer : IRideProducer
     private readonly IKafkaMessageProducer<RideProcessorKey, RideStartedValue> _rideStartedProducer;
     private readonly IKafkaMessageProducer<RideProcessorKey, RideCompletedValue> _rideCompletedProducer;
     private readonly IKafkaMessageProducer<RideProcessorKey, RideCancelledValue> _rideCancelledProducer;
-    private readonly IKafkaMessageProducer<RideProcessorKey, RideAssignedValue> _rideAssignedProducer;
+    private readonly IKafkaMessageProducer<RideProcessorKey, RideConfirmedValue> _rideConfirmedProducer;
 
     public RideProducer(
         IKafkaMessageProducer<RideProcessorKey, RideRequestedValue> rideRequestedProducer,
         IKafkaMessageProducer<RideProcessorKey, RideStartedValue> rideStartedProducer,
         IKafkaMessageProducer<RideProcessorKey, RideCompletedValue> rideCompletedProducer,
         IKafkaMessageProducer<RideProcessorKey, RideCancelledValue> rideCancelledProducer,
-        IKafkaMessageProducer<RideProcessorKey, RideAssignedValue> rideAssignedProducer)
+        IKafkaMessageProducer<RideProcessorKey, RideConfirmedValue> rideConfirmedProducer)
     {
         _rideRequestedProducer = rideRequestedProducer;
         _rideStartedProducer = rideStartedProducer;
         _rideCompletedProducer = rideCompletedProducer;
         _rideCancelledProducer = rideCancelledProducer;
-        _rideAssignedProducer = rideAssignedProducer;
+        _rideConfirmedProducer = rideConfirmedProducer;
     }
 
     public async Task ProduceAsync(RideRequestedEvent rideRequestedEvent, CancellationToken cancellationToken)
@@ -71,12 +71,12 @@ public class RideProducer : IRideProducer
         await _rideCompletedProducer.ProduceAsync(message, cancellationToken);
     }
 
-    public async Task ProduceAsync(RideAssignedEvent rideCancelledEvent, CancellationToken cancellationToken)
+    public async Task ProduceAsync(RideConfirmedEvent rideCancelledEvent, CancellationToken cancellationToken)
     {
         var key = new RideProcessorKey() { RideId = rideCancelledEvent.RideId };
-        var value = new RideAssignedValue { RideId = rideCancelledEvent.RideId, DriverId = rideCancelledEvent.DriverId };
-        var message = new KafkaProducerMessage<RideProcessorKey, RideAssignedValue>(key, value);
+        var value = new RideConfirmedValue { RideId = rideCancelledEvent.RideId, DriverId = rideCancelledEvent.DriverId };
+        var message = new KafkaProducerMessage<RideProcessorKey, RideConfirmedValue>(key, value);
 
-        await _rideAssignedProducer.ProduceAsync(message, cancellationToken);
+        await _rideConfirmedProducer.ProduceAsync(message, cancellationToken);
     }
 }

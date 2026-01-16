@@ -22,8 +22,7 @@ public static class KafkaExtensions
         services.AddPlatformKafka(builder => builder
             .ConfigureOptions(configuration.GetSection("Kafka"))
 
-            .AddRideAssignationFailedConsumer(configuration)
-            .AddRideAssignedConsumer(configuration)
+            .AddRideAssignationConsumer(configuration)
 
             .AddRideAssignedProducer(configuration)
             .AddRideCancelledProducer(configuration)
@@ -41,7 +40,7 @@ public static class KafkaExtensions
     {
         return builder.AddProducer(p => p
             .WithKey<RideProcessorKey>()
-            .WithValue<RideAssignedValue>()
+            .WithValue<RideConfirmedValue>()
             .WithConfiguration(configuration.GetSection("Kafka:Producers:RideAssignedMessage"))
             .SerializeKeyWithNewtonsoft()
             .SerializeValueWithNewtonsoft()
@@ -101,29 +100,16 @@ public static class KafkaExtensions
             .WithOutbox());
     }
 
-    private static IKafkaConfigurationBuilder AddRideAssignationFailedConsumer(
+    private static IKafkaConfigurationBuilder AddRideAssignationConsumer(
         this IKafkaConfigurationBuilder builder,
         IConfiguration configuration)
     {
         return builder.AddConsumer(c => c
             .WithKey<RideKey>()
-            .WithValue<RideAssignationFailed>()
-            .WithConfiguration(configuration.GetSection("Kafka:Consumers:RideAssignationFailedMessage"))
+            .WithValue<RideAssignationMessage>()
+            .WithConfiguration(configuration.GetSection("Kafka:Consumers:RideAssignationMessage"))
             .DeserializeKeyWithNewtonsoft()
             .DeserializeValueWithNewtonsoft()
-            .HandleInboxWith<DispatchDriverAssignationFailedConsumer>());
-    }
-
-    private static IKafkaConfigurationBuilder AddRideAssignedConsumer(
-        this IKafkaConfigurationBuilder builder,
-        IConfiguration configuration)
-    {
-        return builder.AddConsumer(c => c
-            .WithKey<RideKey>()
-            .WithValue<RideAssignedConsumerValue>()
-            .WithConfiguration(configuration.GetSection("Kafka:Consumers:RideAssignedMessage"))
-            .DeserializeKeyWithNewtonsoft()
-            .DeserializeValueWithNewtonsoft()
-            .HandleInboxWith<DispatchDriverAssignedConsumer>());
+            .HandleInboxWith<DispatchDriverAssignation>());
     }
 }

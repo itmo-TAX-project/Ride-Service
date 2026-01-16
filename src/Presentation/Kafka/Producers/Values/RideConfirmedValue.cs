@@ -1,6 +1,6 @@
 ﻿namespace Presentation.Kafka.Producers.Values;
 
-public class RideAssignedValue
+public class RideConfirmedValue
 {
     public long RideId { get; set; }
 
