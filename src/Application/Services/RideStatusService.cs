@@ -29,25 +29,24 @@ public class RideStatusService : IRideStatusService
         };
     }
 
-    public async Task<RideStatus> GetRideStatus(long rideId, CancellationToken cancellationToken)
+    public async Task<RideStatus> GetRideStatusAsync(long rideId, CancellationToken cancellationToken)
     {
-        return await _rideStatusRepository.GetRideStatus(rideId, cancellationToken);
+        return await _rideStatusRepository.GetRideStatusAsync(rideId, cancellationToken);
     }
 
-    public async Task ChangeRideStatus(long rideId, RideStatus toRideStatus, CancellationToken cancellationToken)
+    public async Task ChangeRideStatusAsync(long rideId, RideStatus toRideStatus, CancellationToken cancellationToken)
     {
-        TransactionScope transaction = CreateTransactionScope();
+        using TransactionScope transaction = CreateTransactionScope();
 
-        RideStatus fromRideStatus = await GetRideStatus(rideId, cancellationToken);
+        RideStatus fromRideStatus = await GetRideStatusAsync(rideId, cancellationToken);
         if (!CanChange(fromRideStatus, toRideStatus))
         {
             throw new InvalidOperationException("Cannot change the status of a ride because if is invalid");
         }
 
-        await _rideStatusRepository.ChangeRideStatus(rideId, toRideStatus, cancellationToken);
+        await _rideStatusRepository.ChangeRideStatusAsync(rideId, toRideStatus, cancellationToken);
 
         transaction.Complete();
-        transaction.Dispose();
     }
 
     private static TransactionScope CreateTransactionScope()

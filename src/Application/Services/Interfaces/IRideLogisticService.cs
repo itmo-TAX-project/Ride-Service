@@ -4,13 +4,13 @@ namespace Application.Services.Interfaces;
 
 public interface IRideLogisticService
 {
-    Task DriverAssigned(long rideId, long driverId, CancellationToken cancellationToken);
+    Task DriverAssignedAsync(long rideId, long driverId, CancellationToken cancellationToken);
 
-    Task DriverAssignationFailed(long rideId, CancellationToken cancellationToken);
+    Task DriverAssignationFailedAsync(long rideId, CancellationToken cancellationToken);
 
-    Task RideConfirmed(long rideId, long driverId, CancellationToken cancellationToken);
+    Task RideConfirmedAsync(long rideId, long driverId, CancellationToken cancellationToken);
 
-    Task CancelRide(long rideId, CancellationToken cancellationToken);
+    Task CancelRideAsync(long rideId, CancellationToken cancellationToken);
 
-    Task DriverPositionChanged(DriverStatusDto driverDto, CancellationToken cancellationToken);
+    Task DriverPositionChangedAsync(DriverStatusDto driverDto, CancellationToken cancellationToken);
 }

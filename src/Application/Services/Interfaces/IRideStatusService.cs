@@ -6,7 +6,7 @@ public interface IRideStatusService
 {
     bool CanChange(RideStatus fromRideStatus, RideStatus toRideStatus);
 
-    Task<RideStatus> GetRideStatus(long rideId, CancellationToken cancellationToken);
+    Task<RideStatus> GetRideStatusAsync(long rideId, CancellationToken cancellationToken);
 
-    Task ChangeRideStatus(long rideId, RideStatus toRideStatus, CancellationToken cancellationToken);
+    Task ChangeRideStatusAsync(long rideId, RideStatus toRideStatus, CancellationToken cancellationToken);
 }

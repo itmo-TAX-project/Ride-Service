@@ -4,13 +4,13 @@ namespace Application.Services.Interfaces;
 
 public interface IRideService
 {
-    Task<long> CreateRide(
+    Task<long> CreateRideAsync(
         long passengerId,
         PointDto pickupLocation,
         PointDto dropOffLocation,
         CancellationToken cancellationToken);
 
-    Task<RideDto?> GetPersonCurrentRide(long passengerId, CancellationToken cancellationToken);
+    Task<RideDto?> GetPersonCurrentRideAsync(long passengerId, CancellationToken cancellationToken);
 
-    Task<RideDto?> GetRide(long rideId, CancellationToken cancellationToken);
+    Task<RideDto?> GetRideAsync(long rideId, CancellationToken cancellationToken);
 }

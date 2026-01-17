@@ -23,11 +23,11 @@ public class DispatchDriverAssignation : IKafkaInboxHandler<RideKey, RideAssigna
             RideAssignationMessage value = message.Value;
             if (value.AssignationStatus == AssignationStatus.Failed)
             {
-                await _rideLogisticService.DriverAssignationFailed(message.Key.RideId, cancellationToken);
+                await _rideLogisticService.DriverAssignationFailedAsync(message.Key.RideId, cancellationToken);
             }
             else
             {
-                await _rideLogisticService.DriverAssigned(message.Key.RideId, message.Value.DriverId, cancellationToken);
+                await _rideLogisticService.DriverAssignedAsync(message.Key.RideId, message.Value.DriverId, cancellationToken);
             }
         }
     }

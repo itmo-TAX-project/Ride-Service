@@ -35,47 +35,45 @@ public class RideLogisticService : IRideLogisticService
         _routeServicePort = routeServicePort;
     }
 
-    public async Task DriverAssigned(long rideId, long driverId, CancellationToken cancellationToken)
+    public async Task DriverAssignedAsync(long rideId, long driverId, CancellationToken cancellationToken)
     {
-        TransactionScope transaction = CreateTransactionScope();
+        using TransactionScope transaction = CreateTransactionScope();
 
         if (!await CheckIfRideExistsAsync(rideId, cancellationToken))
         {
             throw new Exception("Ride doesn't exist");
         }
 
-        await _rideRepository.AddRideDriver(rideId, driverId, cancellationToken);
-        await _rideStatusService.ChangeRideStatus(rideId, RideStatus.DriverAssigned, cancellationToken);
+        await _rideRepository.AddRideDriverAsync(rideId, driverId, cancellationToken);
+        await _rideStatusService.ChangeRideStatusAsync(rideId, RideStatus.DriverAssigned, cancellationToken);
 
         transaction.Complete();
-        transaction.Dispose();
     }
 
-    public async Task DriverAssignationFailed(long rideId, CancellationToken cancellationToken)
+    public async Task DriverAssignationFailedAsync(long rideId, CancellationToken cancellationToken)
     {
-        TransactionScope transaction = CreateTransactionScope();
+        using TransactionScope transaction = CreateTransactionScope();
 
         if (!await CheckIfRideExistsAsync(rideId, cancellationToken))
         {
             throw new Exception("Ride doesn't exist");
         }
 
-        await _rideStatusService.ChangeRideStatus(rideId, RideStatus.Cancelled, cancellationToken);
+        await _rideStatusService.ChangeRideStatusAsync(rideId, RideStatus.Cancelled, cancellationToken);
 
         transaction.Complete();
-        transaction.Dispose();
     }
 
-    public async Task RideConfirmed(long rideId, long driverId, CancellationToken cancellationToken)
+    public async Task RideConfirmedAsync(long rideId, long driverId, CancellationToken cancellationToken)
     {
-        TransactionScope transaction = CreateTransactionScope();
+        using TransactionScope transaction = CreateTransactionScope();
 
         if (!await CheckIfRideExistsAsync(rideId, cancellationToken))
         {
             throw new Exception("Ride doesn't exist");
         }
 
-        await _rideStatusService.ChangeRideStatus(rideId, RideStatus.Confirmed, cancellationToken);
+        await _rideStatusService.ChangeRideStatusAsync(rideId, RideStatus.Confirmed, cancellationToken);
 
         var rideAssignedMessage = new RideConfirmedEvent()
         {
@@ -85,19 +83,18 @@ public class RideLogisticService : IRideLogisticService
         await _rideProducer.ProduceAsync(rideAssignedMessage, cancellationToken);
 
         transaction.Complete();
-        transaction.Dispose();
     }
 
-    public async Task CancelRide(long rideId, CancellationToken cancellationToken)
+    public async Task CancelRideAsync(long rideId, CancellationToken cancellationToken)
     {
-        TransactionScope transaction = CreateTransactionScope();
+        using TransactionScope transaction = CreateTransactionScope();
 
         if (!await CheckIfRideExistsAsync(rideId, cancellationToken))
         {
             throw new Exception("Ride doesn't exist");
         }
 
-        await _rideStatusService.ChangeRideStatus(rideId, RideStatus.Cancelled, cancellationToken);
+        await _rideStatusService.ChangeRideStatusAsync(rideId, RideStatus.Cancelled, cancellationToken);
 
         var rideCancelledMessage = new RideCancelledEvent()
         {
@@ -106,14 +103,13 @@ public class RideLogisticService : IRideLogisticService
         await _rideProducer.ProduceAsync(rideCancelledMessage, cancellationToken);
 
         transaction.Complete();
-        transaction.Dispose();
     }
 
-    public async Task DriverPositionChanged(DriverStatusDto driverDto, CancellationToken cancellationToken)
+    public async Task DriverPositionChangedAsync(DriverStatusDto driverDto, CancellationToken cancellationToken)
     {
-        TransactionScope transaction = CreateTransactionScope();
+        using TransactionScope transaction = CreateTransactionScope();
 
-        RideDto? ride = await _rideRepository.GetActiveRideByDriverId(driverDto.DriverId, cancellationToken);
+        RideDto? ride = await _rideRepository.GetActiveRideByDriverIdAsync(driverDto.DriverId, cancellationToken);
 
         if (ride == null || !await CheckIfRideExistsAsync(ride.RideId, cancellationToken))
         {
@@ -128,7 +124,7 @@ public class RideLogisticService : IRideLogisticService
                         driverDto.Location,
                         cancellationToken))
                 {
-                    await _rideStatusService.ChangeRideStatus(ride.RideId, RideStatus.Started, cancellationToken);
+                    await _rideStatusService.ChangeRideStatusAsync(ride.RideId, RideStatus.Started, cancellationToken);
 
                     var rideStartedEvent = new RideStartedEvent()
                     {
@@ -145,7 +141,7 @@ public class RideLogisticService : IRideLogisticService
                         driverDto.Location,
                         cancellationToken))
                 {
-                    await _rideStatusService.ChangeRideStatus(ride.RideId, RideStatus.Completed, cancellationToken);
+                    await _rideStatusService.ChangeRideStatusAsync(ride.RideId, RideStatus.Completed, cancellationToken);
                     RouteMetadataDto routeMetadataDto = await _routeServicePort.GetRouteMetadataAsync(ride.RideId, cancellationToken);
                     var rideStartedEvent = new RideCompletedEvent()
                     {
@@ -161,7 +157,6 @@ public class RideLogisticService : IRideLogisticService
         }
 
         transaction.Complete();
-        transaction.Dispose();
     }
 
     private static TransactionScope CreateTransactionScope()
@@ -174,12 +169,11 @@ public class RideLogisticService : IRideLogisticService
 
     private async Task<bool> CheckIfRideExistsAsync(long rideId, CancellationToken cancellationToken)
     {
-        TransactionScope transaction = CreateTransactionScope();
+        using TransactionScope transaction = CreateTransactionScope();
 
-        RideDto? ride = await _rideRepository.GetRide(rideId, cancellationToken);
+        RideDto? ride = await _rideRepository.GetRideAsync(rideId, cancellationToken);
 
         transaction.Complete();
-        transaction.Dispose();
 
         return ride != null;
     }

@@ -20,7 +20,7 @@ public class RideController : RideService.RideServiceBase
 
     public override async Task<CreateRideResponse> CreateRide(CreateRideRequest request, ServerCallContext context)
     {
-        long rideId = await _rideService.CreateRide(
+        long rideId = await _rideService.CreateRideAsync(
             request.PassengerId,
             new PointDto(request.PickupLatitude, request.PickupLongitude),
             new PointDto(request.DropoffLatitude, request.DropoffLongitude),
@@ -31,7 +31,7 @@ public class RideController : RideService.RideServiceBase
 
     public override async Task<GetRideResponse> GetRide(GetRideRequest request, ServerCallContext context)
     {
-        Application.DTO.RideDto? rideDto = await _rideService.GetRide(request.RideId, context.CancellationToken);
+        Application.DTO.RideDto? rideDto = await _rideService.GetRideAsync(request.RideId, context.CancellationToken);
 
         return new GetRideResponse
         {
@@ -41,7 +41,7 @@ public class RideController : RideService.RideServiceBase
 
     public override async Task<CancelRideResponse> CancelRide(CancelRideRequest request, ServerCallContext context)
     {
-        await _rideLogisticService.CancelRide(request.RideId, context.CancellationToken);
+        await _rideLogisticService.CancelRideAsync(request.RideId, context.CancellationToken);
 
         return new CancelRideResponse();
     }

@@ -14,7 +14,7 @@ public class RideRepository : IRideRepository
         _datasource = datasource;
     }
 
-    public async Task<long> CreateRide(RideDto dto, CancellationToken cancellationToken)
+    public async Task<long> CreateRideAsync(RideDto dto, CancellationToken cancellationToken)
     {
         const string sql = """
                            INSERT INTO rides (
@@ -50,7 +50,7 @@ public class RideRepository : IRideRepository
                       ?? throw new InvalidOperationException("Can not create ride"));
     }
 
-    public async Task<RideDto?> GetRide(long rideId, CancellationToken cancellationToken)
+    public async Task<RideDto?> GetRideAsync(long rideId, CancellationToken cancellationToken)
     {
         const string sql = """
                            SELECT *
@@ -80,7 +80,7 @@ public class RideRepository : IRideRepository
         };
     }
 
-    public async Task AddRideDriver(long rideId, long driverId, CancellationToken cancellationToken)
+    public async Task AddRideDriverAsync(long rideId, long driverId, CancellationToken cancellationToken)
     {
         const string sql = """
                            UPDATE rides
@@ -97,7 +97,7 @@ public class RideRepository : IRideRepository
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public async Task AddRoute(long rideId, long routeId, CancellationToken cancellationToken)
+    public async Task AddRouteAsync(long rideId, long routeId, CancellationToken cancellationToken)
     {
         const string sql = """
                            UPDATE rides
@@ -114,7 +114,7 @@ public class RideRepository : IRideRepository
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public async Task<RideDto?> GetActiveRideByPassengerId(long passengerId, CancellationToken cancellationToken)
+    public async Task<RideDto?> GetActiveRideByPassengerIdAsync(long passengerId, CancellationToken cancellationToken)
     {
         const string sql = """
                            SELECT *
@@ -146,7 +146,7 @@ public class RideRepository : IRideRepository
         };
     }
 
-    public async Task<RideDto?> GetActiveRideByDriverId(long driverId, CancellationToken cancellationToken)
+    public async Task<RideDto?> GetActiveRideByDriverIdAsync(long driverId, CancellationToken cancellationToken)
     {
         const string sql = """
                            SELECT *

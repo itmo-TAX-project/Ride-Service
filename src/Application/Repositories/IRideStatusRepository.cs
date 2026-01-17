@@ -4,7 +4,7 @@ namespace Application.Repositories;
 
 public interface IRideStatusRepository
 {
-    Task<RideStatus> GetRideStatus(long rideId, CancellationToken token);
+    Task<RideStatus> GetRideStatusAsync(long rideId, CancellationToken token);
 
-    Task ChangeRideStatus(long rideId, RideStatus toRideStatus, CancellationToken token);
+    Task ChangeRideStatusAsync(long rideId, RideStatus toRideStatus, CancellationToken token);
 }

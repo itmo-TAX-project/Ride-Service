@@ -13,7 +13,7 @@ public class RideStatusRepository : IRideStatusRepository
         _datasource = datasource;
     }
 
-    public async Task<RideStatus> GetRideStatus(long rideId, CancellationToken token)
+    public async Task<RideStatus> GetRideStatusAsync(long rideId, CancellationToken token)
     {
         const string sql = """
                         SELECT status
@@ -30,7 +30,7 @@ public class RideStatusRepository : IRideStatusRepository
         return result ?? throw new InvalidOperationException($"Ride is not found");
     }
 
-    public async Task ChangeRideStatus(long rideId, RideStatus toRideStatus, CancellationToken token)
+    public async Task ChangeRideStatusAsync(long rideId, RideStatus toRideStatus, CancellationToken token)
     {
         const string sql = """
                         UPDATE rides

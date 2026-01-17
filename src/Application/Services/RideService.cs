@@ -31,15 +31,15 @@ public class RideService : IRideService
         _rideProducer = rideProducer;
     }
 
-    public async Task<long> CreateRide(
+    public async Task<long> CreateRideAsync(
         long passengerId,
         PointDto pickupLocation,
         PointDto dropOffLocation,
         CancellationToken cancellationToken)
     {
-        TransactionScope transaction = CreateTransactionScope();
+        using TransactionScope transaction = CreateTransactionScope();
 
-        if (await GetPersonCurrentRide(passengerId, cancellationToken) != null)
+        if (await GetPersonCurrentRideAsync(passengerId, cancellationToken) != null)
         {
             throw new ApplicationException("Ride already exists");
         }
@@ -52,12 +52,12 @@ public class RideService : IRideService
             Status = RideStatus.Requested,
         };
 
-        long rideId = await _rideRepository.CreateRide(rideDto, cancellationToken);
+        long rideId = await _rideRepository.CreateRideAsync(rideDto, cancellationToken);
 
         long routeId = await _routeServicePort.CalculateRouteAsync(pickupLocation, dropOffLocation, cancellationToken);
-        await _rideRepository.AddRoute(rideId, routeId, cancellationToken);
+        await _rideRepository.AddRouteAsync(rideId, routeId, cancellationToken);
 
-        await _rideStatusService.ChangeRideStatus(rideId, RideStatus.SearchingDriver, cancellationToken);
+        await _rideStatusService.ChangeRideStatusAsync(rideId, RideStatus.SearchingDriver, cancellationToken);
 
         var rideRequestedEvent = new RideRequestedEvent()
         {
@@ -69,19 +69,18 @@ public class RideService : IRideService
         await _rideProducer.ProduceAsync(rideRequestedEvent, cancellationToken);
 
         transaction.Complete();
-        transaction.Dispose();
 
         return rideId;
     }
 
-    public async Task<RideDto?> GetPersonCurrentRide(long passengerId, CancellationToken cancellationToken)
+    public async Task<RideDto?> GetPersonCurrentRideAsync(long passengerId, CancellationToken cancellationToken)
     {
-        return await _rideRepository.GetActiveRideByPassengerId(passengerId, cancellationToken);
+        return await _rideRepository.GetActiveRideByPassengerIdAsync(passengerId, cancellationToken);
     }
 
-    public async Task<RideDto?> GetRide(long rideId, CancellationToken cancellationToken)
+    public async Task<RideDto?> GetRideAsync(long rideId, CancellationToken cancellationToken)
     {
-        return await _rideRepository.GetRide(rideId, cancellationToken);
+        return await _rideRepository.GetRideAsync(rideId, cancellationToken);
     }
 
     private static TransactionScope CreateTransactionScope()
