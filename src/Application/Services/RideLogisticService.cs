@@ -21,18 +21,22 @@ public class RideLogisticService : IRideLogisticService
 
     private readonly IRouteServicePort _routeServicePort;
 
+    private readonly IPassengerPort _passengerPort;
+
     public RideLogisticService(
         IRideRepository rideRepository,
         IRideStatusService rideStatusService,
         IDistanceService distanceService,
         IRideProducer rideProducer,
-        IRouteServicePort routeServicePort)
+        IRouteServicePort routeServicePort,
+        IPassengerPort passengerPort)
     {
         _rideRepository = rideRepository;
         _rideStatusService = rideStatusService;
         _distanceService = distanceService;
         _rideProducer = rideProducer;
         _routeServicePort = routeServicePort;
+        _passengerPort = passengerPort;
     }
 
     public async Task DriverAssignedAsync(long rideId, long driverId, CancellationToken cancellationToken)
@@ -143,9 +147,10 @@ public class RideLogisticService : IRideLogisticService
                 {
                     await _rideStatusService.ChangeRideStatusAsync(ride.RideId, RideStatus.Completed, cancellationToken);
                     RouteMetadataDto routeMetadataDto = await _routeServicePort.GetRouteMetadataAsync(ride.RideId, cancellationToken);
+                    long passengerAccountId = await _passengerPort.GetPassengerAccountIdAsync(ride.PassengerId, cancellationToken);
                     var rideStartedEvent = new RideCompletedEvent()
                     {
-                        AccountId = ride.PassengerId,
+                        AccountId = passengerAccountId,
                         RideId = ride.RideId,
                         DurationMeters = routeMetadataDto.DurationMeters,
                         DurationTime = routeMetadataDto.DurationTime,
