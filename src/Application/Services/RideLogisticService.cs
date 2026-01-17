@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.DTO.Enums;
+using Application.Ports;
 using Application.Ports.ProducersPorts;
 using Application.Ports.ProducersPorts.Events;
 using Application.Repositories;
@@ -18,16 +19,20 @@ public class RideLogisticService : IRideLogisticService
 
     private readonly IRideProducer _rideProducer;
 
+    private readonly IRouteServicePort _routeServicePort;
+
     public RideLogisticService(
         IRideRepository rideRepository,
         IRideStatusService rideStatusService,
         IDistanceService distanceService,
-        IRideProducer rideProducer)
+        IRideProducer rideProducer,
+        IRouteServicePort routeServicePort)
     {
         _rideRepository = rideRepository;
         _rideStatusService = rideStatusService;
         _distanceService = distanceService;
         _rideProducer = rideProducer;
+        _routeServicePort = routeServicePort;
     }
 
     public async Task DriverAssigned(long rideId, long driverId, CancellationToken cancellationToken)
@@ -141,10 +146,13 @@ public class RideLogisticService : IRideLogisticService
                         cancellationToken))
                 {
                     await _rideStatusService.ChangeRideStatus(ride.RideId, RideStatus.Completed, cancellationToken);
-
+                    RouteMetadataDto routeMetadataDto = await _routeServicePort.GetRouteMetadataAsync(ride.RideId, cancellationToken);
                     var rideStartedEvent = new RideCompletedEvent()
                     {
+                        AccountId = ride.PassengerId,
                         RideId = ride.RideId,
+                        DurationMeters = routeMetadataDto.DurationMeters,
+                        DurationTime = routeMetadataDto.DurationTime,
                     };
                     await _rideProducer.ProduceAsync(rideStartedEvent, cancellationToken);
                 }

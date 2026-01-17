@@ -13,7 +13,7 @@ public class RouteServiceGrpcClient : IRouteServicePort
         _grpcClient = grpcClient;
     }
 
-    public async Task<long> CalculateRoute(PointDto pickup, PointDto dropoff, CancellationToken cancellationToken)
+    public async Task<long> CalculateRouteAsync(PointDto pickup, PointDto dropoff, CancellationToken cancellationToken)
     {
         var request = new CalculateRouteRequest
         {
@@ -25,5 +25,22 @@ public class RouteServiceGrpcClient : IRouteServicePort
             request,
             cancellationToken: cancellationToken);
         return response.RouteId;
+    }
+
+    public async Task<RouteMetadataDto> GetRouteMetadataAsync(long routeId, CancellationToken cancellationToken)
+    {
+        var request = new GetRouteRequest
+        {
+            RouteId = routeId,
+        };
+
+        GetRouteResponse response = await _grpcClient.GetRouteAsync(
+            request,
+            cancellationToken: cancellationToken);
+        return new RouteMetadataDto
+        {
+            DurationMeters = (decimal)response.Route.DistanceM,
+            DurationTime = response.Route.DurationS,
+        };
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Presentation.Kafka.Producers.Values;
+﻿namespace Presentation.Kafka.Consumers.Values;
 
 public enum AssignationStatus
 {

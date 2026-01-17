@@ -64,8 +64,14 @@ public class RideProducer : IRideProducer
 
     public async Task ProduceAsync(RideCompletedEvent rideCompletedEvent, CancellationToken cancellationToken)
     {
-        var key = new RideProcessorKey() { RideId = rideCompletedEvent.RideId };
-        var value = new RideCompletedValue() { RideId = rideCompletedEvent.RideId };
+        var key = new RideProcessorKey { RideId = rideCompletedEvent.RideId };
+        var value = new RideCompletedValue
+        {
+            RideId = rideCompletedEvent.RideId,
+            AccountId = rideCompletedEvent.AccountId,
+            DurationMeters = rideCompletedEvent.DurationMeters,
+            DurationTime = rideCompletedEvent.DurationTime,
+        };
         var message = new KafkaProducerMessage<RideProcessorKey, RideCompletedValue>(key, value);
 
         await _rideCompletedProducer.ProduceAsync(message, cancellationToken);

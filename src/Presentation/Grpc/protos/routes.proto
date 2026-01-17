@@ -18,6 +18,34 @@ message CalculateRouteResponse {
   int64 route_id = 1;
 }
 
+enum SegmentType {
+  DEFAULT = 0;
+  ROAD = 1;
+  TURN = 2;
+}
+
+message Segment {
+  SegmentType type = 1;
+  double length_m = 2;
+}
+
+message Route {
+  int64 route_id = 1;
+  repeated Point path_polyline = 2;
+  double distance_m = 3;
+  int64 duration_s = 4;
+  repeated Segment segments = 5;
+}
+
+message GetRouteRequest {
+  int64 route_id = 1;
+}
+
+message GetRouteResponse {
+  Route route = 1;
+}
+
 service RouteService {
   rpc CalculateRoute(CalculateRouteRequest) returns (CalculateRouteResponse);
+  rpc GetRoute(GetRouteRequest) returns (GetRouteResponse);
 }

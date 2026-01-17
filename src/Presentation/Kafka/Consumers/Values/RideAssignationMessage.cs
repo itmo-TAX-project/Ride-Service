@@ -1,6 +1,4 @@
-﻿using Presentation.Kafka.Producers.Values;
-
-namespace Presentation.Kafka.Consumers.Values;
+﻿namespace Presentation.Kafka.Consumers.Values;
 
 public class RideAssignationMessage
 {

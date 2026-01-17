@@ -2,7 +2,6 @@
 using Itmo.Dev.Platform.Kafka.Consumer;
 using Presentation.Kafka.Consumers.Keys;
 using Presentation.Kafka.Consumers.Values;
-using Presentation.Kafka.Producers.Values;
 
 namespace Presentation.Kafka.Consumers;
 

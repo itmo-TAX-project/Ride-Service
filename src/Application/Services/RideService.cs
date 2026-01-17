@@ -54,7 +54,7 @@ public class RideService : IRideService
 
         long rideId = await _rideRepository.CreateRide(rideDto, cancellationToken);
 
-        long routeId = await _routeServicePort.CalculateRoute(pickupLocation, dropOffLocation, cancellationToken);
+        long routeId = await _routeServicePort.CalculateRouteAsync(pickupLocation, dropOffLocation, cancellationToken);
         await _rideRepository.AddRoute(rideId, routeId, cancellationToken);
 
         await _rideStatusService.ChangeRideStatus(rideId, RideStatus.SearchingDriver, cancellationToken);
