@@ -23,6 +23,8 @@ public static class KafkaExtensions
             .ConfigureOptions(configuration.GetSection("Kafka"))
 
             .AddRideAssignationConsumer(configuration)
+            .AddRideConfirmationConsumer(configuration)
+            .AddDriverStatusChangeConsumer(configuration)
 
             .AddRideAssignedProducer(configuration)
             .AddRideCancelledProducer(configuration)
@@ -111,5 +113,31 @@ public static class KafkaExtensions
             .DeserializeKeyWithNewtonsoft()
             .DeserializeValueWithNewtonsoft()
             .HandleInboxWith<DispatchDriverAssignation>());
+    }
+
+    private static IKafkaConfigurationBuilder AddRideConfirmationConsumer(
+        this IKafkaConfigurationBuilder builder,
+        IConfiguration configuration)
+    {
+        return builder.AddConsumer(c => c
+            .WithKey<RideKey>()
+            .WithValue<ConfirmRideValue>()
+            .WithConfiguration(configuration.GetSection("Kafka:Consumers:RideConfirmationMessage"))
+            .DeserializeKeyWithNewtonsoft()
+            .DeserializeValueWithNewtonsoft()
+            .HandleInboxWith<ConfirmRideHandler>());
+    }
+
+    private static IKafkaConfigurationBuilder AddDriverStatusChangeConsumer(
+        this IKafkaConfigurationBuilder builder,
+        IConfiguration configuration)
+    {
+        return builder.AddConsumer(c => c
+            .WithKey<TaxiDriverStatusChangedMessageKey>()
+            .WithValue<TaxiDriverStatusChangedMessage>()
+            .WithConfiguration(configuration.GetSection("Kafka:Consumers:DriverStatusChangeMessage"))
+            .DeserializeKeyWithNewtonsoft()
+            .DeserializeValueWithNewtonsoft()
+            .HandleInboxWith<DriverStatusChangeHandler>());
     }
 }
